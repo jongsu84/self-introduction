@@ -117,6 +117,10 @@ body {
   border: none; background: transparent; color: var(--text-secondary); transition: background .12s;
 }
 .topbar-btn:hover { background: var(--hover); }
+.share-btn { display: inline-flex; align-items: center; gap: 6px; padding: 5px 10px; }
+.share-btn svg { display: block; flex-shrink: 0; }
+.share-btn-label { line-height: 1; }
+@media (max-width: 768px) { .share-btn-label { display: none; } .share-btn { padding: 6px 8px; } }
 
 /* HAMBURGER (mobile only) */
 .menu-btn {
@@ -473,8 +477,16 @@ p { font-size: 14.5px; line-height: 1.75; color: var(--text); margin: 4px 0; }
       홈 / 소개
     </div>
     <div class="topbar-actions">
-      <button class="topbar-btn">공유</button>
-      <button class="topbar-btn">⋯</button>
+      <button class="topbar-btn share-btn" type="button" onclick="sharePage()" aria-label="공유">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="18" cy="5" r="3"/>
+          <circle cx="6" cy="12" r="3"/>
+          <circle cx="18" cy="19" r="3"/>
+          <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
+          <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+        </svg>
+        <span class="share-btn-label">공유</span>
+      </button>
     </div>
   </div>
 
@@ -956,6 +968,24 @@ function renderLB(){
   }).join('');
 }
 function lbGoTo(i){ lbIdx=i; renderLB(); }
+
+// Share button
+function sharePage(){
+  var data = { title: document.title || '한종수 포트폴리오', url: location.href };
+  if (navigator.share) {
+    navigator.share(data).catch(function(){});
+    return;
+  }
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(location.href).then(function(){
+      alert('링크가 복사되었습니다.\n' + location.href);
+    }).catch(function(){
+      window.prompt('아래 링크를 복사하세요:', location.href);
+    });
+    return;
+  }
+  window.prompt('아래 링크를 복사하세요:', location.href);
+}
 
 // Mobile swipe support on lightbox
 (function(){
